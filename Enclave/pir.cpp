@@ -160,6 +160,14 @@ queryLSets(int l, vector<int> u, vector<vector<int>> &S_list) {
     return ret;
 }
 
+void decode() {
+	Record a = 10;
+	for (int i = 0; i < K; i++) {
+		Record b = rand();
+		a ^= b;
+	}
+}
+
 inline double getTimeDelta(uint64_t s1, uint64_t ns1, uint64_t s2, uint64_t ns2) {
     double result = 0;
     result = ((long)ns2 - (long)ns1)/1000000.0 + ((long)s2-(long)s1)*1000.0 ;
@@ -192,5 +200,13 @@ void ecall_pir(void) {
 
     delta = getTimeDelta(s1, ns1, s2, ns2);
     printf("The time for query is %f ms\n", delta);
+
+    ocall_get_time(&s1, &ns1);
+    decode();
+    ocall_get_time(&s2, &ns2);
+
+ 	delta = getTimeDelta(s1, ns1, s2, ns2);
+    printf("Decode time is %f ms\n", delta);
+
 
 }
