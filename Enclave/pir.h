@@ -37,7 +37,6 @@ std::vector<int> query(u64 u, std::vector<int> &S, int &hint_index);
 
 Record answer(std::vector<int> s, RecordSet &db);
 
-Record decode(Record a);
 
 std::vector<RecordSet> genLHintSets(RecordSet &db, int l, std::vector<std::vector<int>> &S_list);
 

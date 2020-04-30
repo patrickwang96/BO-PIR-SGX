@@ -60,6 +60,7 @@ extern "C" {
 #endif
 
 void ecall_libcxx_functions(void);
+void ocall_get_time(uint64_t *second, uint64_t *nanosecond);
 
 
 #if defined(__cplusplus)

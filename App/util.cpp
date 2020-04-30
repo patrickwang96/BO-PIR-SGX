@@ -5,7 +5,7 @@
 #include "time.h"
 
 
-void ocall_get_time(long *second, long *nanosecond)
+void ocall_get_time(uint64_t *second, uint64_t *nanosecond)
 {
     struct timespec wall_clock;
     clock_gettime(CLOCK_REALTIME, &wall_clock);

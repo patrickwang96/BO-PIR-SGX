@@ -166,7 +166,7 @@ int SGX_CDECL main(int argc, char *argv[])
  
     
     /* Utilize trusted libraries */ 
-    ecall_pir();
+    ecall_pir(global_eid);
     
     /* Destroy the enclave */
     sgx_destroy_enclave(global_eid);

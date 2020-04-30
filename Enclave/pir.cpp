@@ -115,12 +115,6 @@ Record answer(vector<int> s, RecordSet &db) {
 }
 
 
-Record decode(Record a, u64 u, unordered_map<int, int> &map) {
-    u64 index = map[u];
-    Record h_j;
-    return h_j ^ a;
-}
-
 vector<RecordSet> genLHintSets(RecordSet &db, int l, vector<vector<int>> &S_list) {
     S_list.reserve(l);
     vector<RecordSet> hintset(l);
@@ -184,16 +178,16 @@ void ecall_pir(void) {
 
     uint64_t s1, s2, ns1, ns2;
 
-    void ocall_get_time(&s1, &ns1);
+    ocall_get_time(&s1, &ns1);
     hintsets = genLHintSets(db, L, S);
-    void ocall_get_time(&s2, &ns2);
+    ocall_get_time(&s2, &ns2);
 
     double delta = getTimeDelta(s1, ns2, s2, ns2);
     printf("The time for preprocessing is %f ms\n", delta);
 
-    void ocall_get_time(&s1, &ns1);
+    ocall_get_time(&s1, &ns1);
     querys = queryLSets(L, u, S);
-    void ocall_get_time(&s2, &ns2);
+    ocall_get_time(&s2, &ns2);
 
     delta = getTimeDelta(s1, ns2, s2, ns2);
     printf("The time for query is %f ms\n", delta);

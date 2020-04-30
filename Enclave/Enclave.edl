@@ -13,7 +13,7 @@ enclave {
     from "sgx_tstdc.edl" import *;
 
     trusted {
-        void ecall_pir();
+        public void ecall_pir();
     };
 
     /* 
@@ -23,7 +23,7 @@ enclave {
      */
     untrusted {
         void ocall_print_string([in, string] const char *str);
-        void ocall_get_time([out, size=8] int *second, [out, size=8] int *nanosecond);
+        void ocall_get_time([out, size=8] uint64_t *second, [out, size=8] uint64_t *nanosecond);
     };
 
 };
