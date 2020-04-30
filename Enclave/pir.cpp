@@ -162,8 +162,8 @@ queryLSets(int l, vector<int> u, vector<vector<int>> &S_list) {
 
 inline double getTimeDelta(uint64_t s1, uint64_t ns1, uint64_t s2, uint64_t ns2) {
     double result = 0;
-    result = ns2 - ns1 + (s2 - s1) * 1000000000.0;
-    return result / 1000000.0;
+    result = ((long)ns2 - (long)ns1)/1000000.0 + ((long)s2-(long)s1)*1000.0 ;
+    return result;
 }
 
 void ecall_pir(void) {
@@ -183,14 +183,14 @@ void ecall_pir(void) {
     hintsets = genLHintSets(db, L, S);
     ocall_get_time(&s2, &ns2);
 
-    double delta = getTimeDelta(s1, ns2, s2, ns2);
+    double delta = getTimeDelta(s1, ns1, s2, ns2);
     printf("The time for preprocessing is %f ms\n", delta);
 
     ocall_get_time(&s1, &ns1);
     querys = queryLSets(L, u, S);
     ocall_get_time(&s2, &ns2);
 
-    delta = getTimeDelta(s1, ns2, s2, ns2);
+    delta = getTimeDelta(s1, ns1, s2, ns2);
     printf("The time for query is %f ms\n", delta);
 
 }
