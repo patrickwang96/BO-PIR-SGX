@@ -100,9 +100,7 @@ vector<int> extract_query_by_hint(int u, vector<int> &S, int hint_index) {
 vector<int> query(u64 u, vector<int> &S, int &hint_index) {
     int n = S.size();
     int j = sqrt(n);
-	printf("enter query function\n");
     hint_index = get_hint_index(u, S);
-	printf("query index got\n");
 
     return extract_query_by_hint(u, S, hint_index);
 //    return ret;
@@ -141,16 +139,15 @@ queryLSets(int l, vector<int> u, vector<vector<int>> &S_list) {
         unordered_set<int> cur = {hint};
         hashset[i] = cur;
     }
-	printf("done first %d l querys\n", l);
     for (int i = l; i < K; i++) {
         // check is rest u indexs
         bool found = false;
         for (int j = 0; j < l; j++) {
-            hint = get_hint_index(u[i], S_list[l]);
+            hint = get_hint_index(u[i], S_list[j]);
             if (hashset[j].count(hint)) {
                 continue;
             } else {
-                ret[i] = extract_query_by_hint(u[i], S_list[l], hint);
+                ret[i] = extract_query_by_hint(u[i], S_list[j], hint);
                 found = true;
                 break;
             }
@@ -184,14 +181,12 @@ void ecall_pir(void) {
 
     ocall_get_time(&s1, &ns1);
     hintsets = genLHintSets(db, L, S);
-	printf("done with hints processing\n");
     ocall_get_time(&s2, &ns2);
 
     double delta = getTimeDelta(s1, ns2, s2, ns2);
     printf("The time for preprocessing is %f ms\n", delta);
 
     ocall_get_time(&s1, &ns1);
-	printf("enter querysets\n");
     querys = queryLSets(L, u, S);
     ocall_get_time(&s2, &ns2);
 
