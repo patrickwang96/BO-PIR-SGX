@@ -90,7 +90,7 @@ vector<int> extract_query_by_hint(int u, vector<int> &S, int hint_index) {
     int j = sqrt(n);
 
     vector<int> ret(j -1);
-    for (int i = 0; i < j; i++) {
+    for (int i = 0; i < j - 1; i++) {
         if (S[hint_index * j + i] == u) continue;
         ret[i] = S[hint_index * j + i];
     }
@@ -100,7 +100,9 @@ vector<int> extract_query_by_hint(int u, vector<int> &S, int hint_index) {
 vector<int> query(u64 u, vector<int> &S, int &hint_index) {
     int n = S.size();
     int j = sqrt(n);
+	printf("enter query function\n");
     hint_index = get_hint_index(u, S);
+	printf("query index got\n");
 
     return extract_query_by_hint(u, S, hint_index);
 //    return ret;
@@ -116,7 +118,7 @@ Record answer(vector<int> s, RecordSet &db) {
 
 
 vector<RecordSet> genLHintSets(RecordSet &db, int l, vector<vector<int>> &S_list) {
-    S_list.reserve(l);
+    //S_list.reserve(l);
     vector<RecordSet> hintset(l);
 
     for (int i = 0; i < l; i++) {
@@ -139,6 +141,7 @@ queryLSets(int l, vector<int> u, vector<vector<int>> &S_list) {
         unordered_set<int> cur = {hint};
         hashset[i] = cur;
     }
+	printf("done first %d l querys\n", l);
     for (int i = l; i < K; i++) {
         // check is rest u indexs
         bool found = false;
@@ -168,8 +171,9 @@ inline double getTimeDelta(uint64_t s1, uint64_t ns1, uint64_t s2, uint64_t ns2)
 
 void ecall_pir(void) {
     RecordSet db = genDb(RECORD_COUNT);
+	printf("db size is %d\n", db.size());
 
-    vector<vector<int>> S;
+    vector<vector<int>> S(L);
     vector<RecordSet> hintsets;
     vector<vector<int>> querys;
     vector<int> u(K);
@@ -180,12 +184,14 @@ void ecall_pir(void) {
 
     ocall_get_time(&s1, &ns1);
     hintsets = genLHintSets(db, L, S);
+	printf("done with hints processing\n");
     ocall_get_time(&s2, &ns2);
 
     double delta = getTimeDelta(s1, ns2, s2, ns2);
     printf("The time for preprocessing is %f ms\n", delta);
 
     ocall_get_time(&s1, &ns1);
+	printf("enter querysets\n");
     querys = queryLSets(L, u, S);
     ocall_get_time(&s2, &ns2);
 

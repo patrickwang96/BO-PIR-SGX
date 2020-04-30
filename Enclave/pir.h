@@ -15,7 +15,7 @@
 #define RECORD_LEN (1)
 #define K 16
 #define L (K/2)
-#define RECORD_COUNT (1024 * 1024)
+#define RECORD_COUNT (50)
 
 typedef std::bitset<RECORD_LEN> Record;
 
