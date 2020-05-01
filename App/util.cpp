@@ -22,5 +22,6 @@ void ocall_send(char* data, uint64_t size) {
 }
 
 void ocall_recv(char* data, uint64_t size) {
-    sock.read_some(boost::asio::buffer(data, size));
+    // sock.read_some(boost::asio::buffer(data, size));
+    boost:asio::read(sock, boost::asio::buffer(data, size), boost::asio::transfer_all());
 }
