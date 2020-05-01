@@ -227,7 +227,7 @@ void ecall_pir_with_net(void) {
     int sqrtn = sqrt(n);
 	printf("db size is %d\n", db.size());
 
-    vector<vector<int>> S(L);
+    vector<vector<int>> S(K2/ALPHA);
     vector<RecordSet> hintsets;
     vector<vector<int>> querys;
     vector<int> u(K2);
