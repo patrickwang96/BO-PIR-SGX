@@ -161,16 +161,20 @@ queryLSets(int l, vector<int> u, vector<vector<int>> &S_list) {
     return ret;
 }
 
-void decode(char* key, sgx_ec256_private_t* ecc_key, sgx_ecc_state_handle_t handle) {
+void decode(sgx_ec256_private_t* ecc_key, sgx_ecc_state_handle_t handle) {
 	Record a = 10;
+	sgx_cmac_128bit_key_t mac_key = {0};
 	for (int i = 0; i < K; i++) {
 		Record b = rand();
 		a ^= b;
         sgx_cmac_128bit_tag_t hash;
-        sgx_rijndael128_cmac_msg(key, &a.to_ulong(), 1, &hash);
+	uint8_t* data = new uint8_t[1];
+	data[0] = a.to_ulong();
+        sgx_rijndael128_cmac_msg(&mac_key, data, 1, &hash);
         // a.to_ulong ^ hash;
         sgx_ec256_signature_t signature;
-        sgx_ecdsa_sign(&a.to_ulong(), 1, ecc_key, &signature, handle);
+        sgx_ecdsa_sign(data, 1, ecc_key, &signature, handle);
+	delete[] data;
 	}
 }
 
@@ -208,7 +212,7 @@ void ecall_pir(void) {
     printf("The time for query is %f ms\n", delta);
 
     ocall_get_time(&s1, &ns1);
-    decode();
+    //decode();
     ocall_get_time(&s2, &ns2);
 
  	delta = getTimeDelta(s1, ns1, s2, ns2);
@@ -228,7 +232,7 @@ void ecall_pir_with_net(void) {
     vector<vector<int>> querys;
     vector<int> u(K);
 
-    char prf_key[12] = {0};
+//    sgx_cmac_128bit_key_t prf_key = {0};
 
     sgx_ecc_state_handle_t ecc_handle;
     sgx_ecc256_open_context(&ecc_handle);
@@ -258,7 +262,7 @@ void ecall_pir_with_net(void) {
         vector<uint8_t> answer(K);
         ocall_recv((char*)answer.data(), answer.size() * sizeof(uint8_t));
         // sock.read_some(buffer(answer));
-        decode(prf_key, &ecc_private_key, ecc_handle);
+        decode(&ecc_private_key, ecc_handle);
     }    
     ocall_get_time(&s2, &ns2);
     double delta = getTimeDelta(s1, ns1, s2, ns2);
