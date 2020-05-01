@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <unordered_set>
 #include "sgx_trts.h"
+#include "sgx_tcrypto.h"
 // #include <iostream>
 
 using namespace std;
@@ -160,11 +161,16 @@ queryLSets(int l, vector<int> u, vector<vector<int>> &S_list) {
     return ret;
 }
 
-void decode() {
+void decode(char* key, sgx_ec256_private_t* ecc_key, sgx_ecc_state_handle_t handle) {
 	Record a = 10;
 	for (int i = 0; i < K; i++) {
 		Record b = rand();
 		a ^= b;
+        sgx_cmac_128bit_tag_t hash;
+        sgx_rijndael128_cmac_msg(key, &a.to_ulong(), 1, &hash);
+        // a.to_ulong ^ hash;
+        sgx_ec256_signature_t signature;
+        sgx_ecdsa_sign(&a.to_ulong(), 1, ecc_key, &signature, handle);
 	}
 }
 
@@ -222,6 +228,17 @@ void ecall_pir_with_net(void) {
     vector<vector<int>> querys;
     vector<int> u(K);
 
+    char prf_key[12] = {0};
+
+    sgx_ecc_state_handle_t ecc_handle;
+    sgx_ecc256_open_context(&ecc_handle);
+
+    sgx_ec256_private_t ecc_private_key;
+    sgx_ec256_public_t ecc_public_key;
+    sgx_ecc256_create_key_pair(&ecc_private_key, &ecc_public_key, ecc_handle);
+
+
+
     for (int i = 0; i < K; i++) u[i] = i;
 
     uint64_t s1, s2, ns1, ns2;
@@ -241,11 +258,13 @@ void ecall_pir_with_net(void) {
         vector<uint8_t> answer(K);
         ocall_recv((char*)answer.data(), answer.size() * sizeof(uint8_t));
         // sock.read_some(buffer(answer));
-        decode();
+        decode(prf_key, &ecc_private_key, ecc_handle);
     }    
     ocall_get_time(&s2, &ns2);
     double delta = getTimeDelta(s1, ns1, s2, ns2);
     printf("Time is %f ms\n", delta);
+
+    sgx_ecc256_close_context(ecc_handle);
 
 
 }
