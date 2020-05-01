@@ -248,6 +248,7 @@ void ecall_pir_with_net(void) {
 
     uint64_t s1, s2, ns1, ns2;
     uint64_t s3, ns3, s4, ns4;
+    uint8_t * db_to_recv = new uint8_t[RECORD_COUNT/8];
     
     for(int k = K1; k <= K2; k += STEP) {
 
@@ -255,6 +256,7 @@ void ecall_pir_with_net(void) {
         ocall_get_time(&s1, &ns1);
         vector<int> total(k * (sqrtn - 1));
         for (int t = 0; t < NUM_TRAIL; t++) {
+            ocall_recv((char*)db_to_recv, RECORD_COUNT/8 * sizeof(uin8_t));
             hintsets = genLHintSets(db, k/ALPHA, S);
             ocall_get_time(&s3, &ns3);
             querys = queryLSets(k/ALPHA, u, S);
