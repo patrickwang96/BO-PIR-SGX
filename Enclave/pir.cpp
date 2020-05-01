@@ -130,7 +130,7 @@ vector<RecordSet> genLHintSets(RecordSet &db, int l, vector<vector<int>> &S_list
 vector<vector<int>>
 queryLSets(int l, vector<int> u, vector<vector<int>> &S_list) {
 
-    vector<vector<int>> ret(K);
+    vector<vector<int>> ret(l * ALPHA);
     vector<unordered_set<int>> hashset(l);
     vector<int> failure;
 
@@ -140,7 +140,7 @@ queryLSets(int l, vector<int> u, vector<vector<int>> &S_list) {
         unordered_set<int> cur = {hint};
         hashset[i] = cur;
     }
-    for (int i = l; i < K; i++) {
+    for (int i = l; i < l * ALPHA; i++) {
         // check is rest u indexs
         bool found = false;
         for (int j = 0; j < l; j++) {
@@ -161,10 +161,10 @@ queryLSets(int l, vector<int> u, vector<vector<int>> &S_list) {
     return ret;
 }
 
-void decode(sgx_ec256_private_t* ecc_key, sgx_ecc_state_handle_t handle) {
+void decode(sgx_ec256_private_t* ecc_key, sgx_ecc_state_handle_t handle, int k) {
 	Record a = 10;
 	sgx_cmac_128bit_key_t mac_key = {0};
-	for (int i = 0; i < K; i++) {
+	for (int i = 0; i < k; i++) {
 		Record b = rand();
 		a ^= b;
         sgx_cmac_128bit_tag_t hash;
@@ -230,7 +230,7 @@ void ecall_pir_with_net(void) {
     vector<vector<int>> S(L);
     vector<RecordSet> hintsets;
     vector<vector<int>> querys;
-    vector<int> u(K);
+    vector<int> u(K2);
 
 //    sgx_cmac_128bit_key_t prf_key = {0};
 
@@ -243,30 +243,39 @@ void ecall_pir_with_net(void) {
 
 
 
-    for (int i = 0; i < K; i++) u[i] = i;
+    for (int i = 0; i < K2; i++) u[i] = i;
 
     uint64_t s1, s2, ns1, ns2;
+    uint64_t s3, ns3, s4, ns4;
     
-    ocall_get_time(&s1, &ns1);
-    vector<int> total(K * (sqrtn - 1));
-    for (int t = 0; t < NUM_TRAIL; t++) {
-        hintsets = genLHintSets(db, L, S);
-        querys = queryLSets(L, u, S);
-        for (int i = 0; i < K; i++) {
-            for (int j = 0; j < (sqrtn-1); j++) {
-                total[i * (sqrtn-1) + j] = querys[i][j];
-            }
-        }
-        ocall_send((char*)total.data(), total.size() * sizeof(int));
+    for(int k = K1; k <= K2; k += STEP) {
 
-        vector<uint8_t> answer(K);
-        ocall_recv((char*)answer.data(), answer.size() * sizeof(uint8_t));
-        // sock.read_some(buffer(answer));
-        decode(&ecc_private_key, ecc_handle);
-    }    
-    ocall_get_time(&s2, &ns2);
-    double delta = getTimeDelta(s1, ns1, s2, ns2);
-    printf("Time is %f ms\n", delta);
+        double response = 0;
+        ocall_get_time(&s1, &ns1);
+        vector<int> total(k * (sqrtn - 1));
+        for (int t = 0; t < NUM_TRAIL; t++) {
+            hintsets = genLHintSets(db, k/ALPHA, S);
+            ocall_get_time(&s3, &ns3);
+            querys = queryLSets(k/ALPHA, u, S);
+            for (int i = 0; i < k/ALPHA; i++) {
+                for (int j = 0; j < (sqrtn-1); j++) {
+                    total[i * (sqrtn-1) + j] = querys[i][j];
+                }
+            }
+            ocall_send((char*)total.data(), total.size() * sizeof(int));
+
+            vector<uint8_t> answer(k);
+            ocall_recv((char*)answer.data(), answer.size() * sizeof(uint8_t));
+            // sock.read_some(buffer(answer));
+            decode(&ecc_private_key, ecc_handle, k);
+            ocall_get_time(&s4, &ns4);
+            response += getTimeDelta(s3, ns3, s4, ns4);
+        }    
+        ocall_get_time(&s2, &ns2);
+        double delta = getTimeDelta(s1, ns1, s2, ns2);
+        printf("K = [%d]: %f ms\n", k,delta/NUM_TRAIL);
+        printf("K = [%d] response time: %f ms\n\n", k,response/NUM_TRAIL);
+    }
 
     sgx_ecc256_close_context(ecc_handle);
 
