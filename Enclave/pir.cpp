@@ -157,6 +157,7 @@ queryLSets(int l, vector<int> u, vector<vector<int>> &S_list) {
         if (!found) failure.push_back(u[i]);
     }
     // cout << "number of failure " << failure.size() << endl;
+    if (failure.size())
     printf("Query: Number of failure is %d\n", failure.size());
     return ret;
 }
