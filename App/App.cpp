@@ -152,7 +152,7 @@ void ocall_print_string(const char *str)
 
 
 boost::asio::io_service service;
-boost::asio::ip::tcp::endpoint ep(ip::address::from_string("127.0.0.1"), 1234);
+boost::asio::ip::tcp::endpoint ep(boost::asio::ip::address::from_string(ADDRESS), PORT);
 boost::asio::ip::tcp::socket sock(service);
 
 /* Application entry */

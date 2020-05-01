@@ -13,8 +13,8 @@
 #include "Enclave_t.h"
 
 #define RECORD_LEN (1)
-#define K 256
-#define L (K / 1.5)
+#define K 16
+#define L (K / 2)
 #define RECORD_COUNT (1024 * 1024)
 #define NUM_TRAIL 5
 

@@ -244,7 +244,7 @@ void ecall_pir_with_net(void) {
         decode();
     }    
     ocall_get_time(&s2, &ns2);
- 	delta = getTimeDelta(s1, ns1, s2, ns2);
+    double delta = getTimeDelta(s1, ns1, s2, ns2);
     printf("Time is %f ms\n", delta);
 
 
