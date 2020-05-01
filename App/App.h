@@ -36,6 +36,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <boost/asio.hpp>
 
 #include "sgx_error.h"       /* sgx_status_t */
 #include "sgx_eid.h"     /* sgx_enclave_id_t */
@@ -54,6 +55,9 @@
 #endif
 
 extern sgx_enclave_id_t global_eid;    /* global enclave id */
+
+#define ADDRESS "10.0.1.33"
+#define PORT 1234
 
 #if defined(__cplusplus)
 extern "C" {

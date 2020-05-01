@@ -210,3 +210,42 @@ void ecall_pir(void) {
 
 
 }
+
+void ecall_pir_with_net(void) {
+    RecordSet db = genDb(RECORD_COUNT);
+    int n = db.size();
+    int sqrtn = sqrt(n);
+	printf("db size is %d\n", db.size());
+
+    vector<vector<int>> S(L);
+    vector<RecordSet> hintsets;
+    vector<vector<int>> querys;
+    vector<int> u(K);
+
+    for (int i = 0; i < K; i++) u[i] = i;
+
+    uint64_t s1, s2, ns1, ns2;
+    
+    ocall_get_time(&s1, &ns1);
+    vector<int> total(K * (sqrtn - 1));
+    for (int t = 0; t < NUM_TRAIL; t++) {
+        hintsets = genLHintSets(db, L, S);
+        querys = queryLSets(L, u, S);
+        for (int i = 0; i < K; i++) {
+            for (int j = 0; j < (sqrtn-1); j++) {
+                total[i * (sqrtn-1) + j] = querys[i][j];
+            }
+        }
+        ocall_send((char*)total.data(), total.size() * sizeof(int));
+
+        vector<uint8_t> answer(K);
+        ocall_recv((char*)answer.data(), answer.size() * sizeof(uint8_t));
+        // sock.read_some(buffer(answer));
+        decode();
+    }    
+    ocall_get_time(&s2, &ns2);
+ 	delta = getTimeDelta(s1, ns1, s2, ns2);
+    printf("Time is %f ms\n", delta);
+
+
+}

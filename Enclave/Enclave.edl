@@ -14,6 +14,7 @@ enclave {
 
     trusted {
         public void ecall_pir();
+        public void ecall_pir_with_net();
     };
 
     /* 
@@ -24,6 +25,8 @@ enclave {
     untrusted {
         void ocall_print_string([in, string] const char *str);
         void ocall_get_time([out, size=8] uint64_t *second, [out, size=8] uint64_t *nanosecond);
+        void ocall_send([user_check]char* data, uint64_t size);
+        void ocall_recv([user_check]char* data, uint64_t size) ;
     };
 
 };

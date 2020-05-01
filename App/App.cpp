@@ -10,6 +10,7 @@
 #include "App.h"
 #include "Enclave_u.h"
 
+
 /* Global EID shared by multiple threads */
 sgx_enclave_id_t global_eid = 0;
 
@@ -150,6 +151,10 @@ void ocall_print_string(const char *str)
 }
 
 
+boost::asio::io_service service;
+boost::asio::ip::tcp::endpoint ep(ip::address::from_string("127.0.0.1"), 1234);
+boost::asio::ip::tcp::socket sock(service);
+
 /* Application entry */
 int SGX_CDECL main(int argc, char *argv[])
 {
@@ -164,9 +169,10 @@ int SGX_CDECL main(int argc, char *argv[])
         return -1; 
     }
  
+    sock.connect(ep);
     
     /* Utilize trusted libraries */ 
-    ecall_pir(global_eid);
+    ecall_pir_with_net(global_eid);
     
     /* Destroy the enclave */
     sgx_destroy_enclave(global_eid);
