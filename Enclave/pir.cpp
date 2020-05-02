@@ -309,3 +309,48 @@ void ecall_pir_with_net(void) {
 
 
 }
+
+
+void advanced_processing() {
+    auto db = new uint8_t[RECORD_COUNT * 288];
+
+    sgx_aes_gcm_128bit_key_t key = {0};
+
+    auto text = new uint8_t[RECORD_COUNT * 288];
+
+    auto iv = new uint8_t[16];
+
+    sgx_cmac_128bit_key_t prf_key = {0};
+    sgx_cmac_128bit_tag_t hash;
+    auto data = new uint8_t[RECORD_COUNT];
+    sgx_ecc_state_handle_t ecc_handle;
+    sgx_ecc256_open_context(&ecc_handle);
+
+
+    sgx_ec256_public_t point;
+
+
+    uint64_t s1, s2, ns1, ns2;
+
+
+    ocall_get_time(&s1, &ns1);
+    sgx_aes_ctr_decrypt(key, db, RECORD_COUNT*288, iv, 128, text);
+
+    vector<Record> output(RECORD_COUNT);
+    for (int i = 0; i < RECORD_COUNT; i++) {
+        // output[i] = text[i*288] < 18; 
+        int result;
+        sgx_ecc256_check_point(&point, ecc_handle, &result);
+        sgx_rijndael128_cmac_msg(&prf_key, data, 1, &hash); 
+    }
+    ocall_get_time(&s2, &ns2);
+
+    sgx_ecc256_close_context(ecc_handle);
+    delete[] db;
+    delete[] text;
+    delete[] iv;
+    delete[] data;
+    double time = getTimeDelta(s1, ns1, s2, ns2);
+    printf("Advanced processing time is %f ms", time);
+
+}
