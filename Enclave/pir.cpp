@@ -288,7 +288,7 @@ void ecall_pir_with_net(void) {
             ocall_get_time(&s4, &ns4);
             response = getTimeDelta(s3, ns3, s4, ns4);
             times[t] = response;
-            printf("no: %d\n", t);
+            printf("%f\n", response);
         }    
         // ocall_get_time(&s2, &ns2);
         // double delta = getTimeDelta(s1, ns1, s2, ns2);
@@ -298,7 +298,7 @@ void ecall_pir_with_net(void) {
 //    sort(times.begin(), times.end());
     double total_time = 0;
     for (auto t : times) {
-        printf("%f\n", t);
+        //printf("%f\n", t);
 	total_time += t;
     }
     total_time /= times.size();
