@@ -256,7 +256,7 @@ void ecall_pir_with_net(void) {
         ocall_get_time(&s1, &ns1);
         vector<int> total(k * (sqrtn - 1));
         for (int t = 0; t < NUM_TRAIL; t++) {
-            ocall_recv((char*)db_to_recv, RECORD_COUNT/8 * sizeof(uin8_t));
+            ocall_recv((char*)db_to_recv, RECORD_COUNT/8 * sizeof(uint8_t));
             hintsets = genLHintSets(db, k/ALPHA, S);
             ocall_get_time(&s3, &ns3);
             querys = queryLSets(k/ALPHA, u, S);
