@@ -248,7 +248,7 @@ void ecall_pir_with_net(void) {
 
 
 
-    for (int i = 0; i < K2; i++) u[i] = i;
+    // for (int i = 0; i < K2; i++) u[i] = rand() % RECORD_COUNT;
 
     uint64_t s1, s2, ns1, ns2;
     uint64_t s3, ns3, s4, ns4;
@@ -262,6 +262,7 @@ void ecall_pir_with_net(void) {
         ocall_get_time(&s1, &ns1);
         vector<int> total(k * (sqrtn - 1));
         for (int t = 0; t < NUM_TRAIL; t++) {
+            for (int i = 0; i < K2; i++) u[i] = rand() % RECORD_COUNT;
             // ocall_recv((char*)db_to_recv, RECORD_COUNT/8 * sizeof(uint8_t));
             // hintsets = genLHintSets(db, k/ALPHA, S);
             response = 0;
