@@ -149,14 +149,18 @@ queryLSets(int l, vector<int> u, vector<vector<int>> &S_list) {
                 continue;
             } else {
                 ret[i] = extract_query_by_hint(u[i], S_list[j], hint);
+                hashset[j].insert(hint);
                 found = true;
                 break;
             }
 
         }
-        if (!found) failure.push_back(u[i]);
+        if (!found) {
+            failure.push_back(u[i]);
+            // if not found, push a dummy array
+            ret[i] = extract_query_by_hint(u[i], S_list[j], 1);
+        }
     }
-    // cout << "number of failure " << failure.size() << endl;
     if (failure.size())
     printf("Query: Number of failure is %d\n", failure.size());
     return ret;
@@ -277,6 +281,7 @@ void ecall_pir_with_net(void) {
             ocall_get_time(&s4, &ns4);
             response = getTimeDelta(s3, ns3, s4, ns4);
             times[t] = response;
+            printf("no: %d\n", t);
         }    
         // ocall_get_time(&s2, &ns2);
         // double delta = getTimeDelta(s1, ns1, s2, ns2);
