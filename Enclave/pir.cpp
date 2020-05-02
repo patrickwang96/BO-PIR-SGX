@@ -158,7 +158,7 @@ queryLSets(int l, vector<int> u, vector<vector<int>> &S_list) {
         if (!found) {
             failure.push_back(u[i]);
             // if not found, push a dummy array
-            ret[i] = extract_query_by_hint(u[i], S_list[j], 1);
+            ret[i] = extract_query_by_hint(u[i], S_list[0], 1);
         }
     }
     if (failure.size())
