@@ -9,6 +9,8 @@
 // #include <iostream>
 
 using namespace std;
+ 
+const  double Prob = 1 - (double)(sqrt(RECORD_COUNT) - 1)/(double)RECORD_COUNT;
 
 uint32_t rand() {
     uint32_t buf;
@@ -102,6 +104,10 @@ vector<int> query(u64 u, vector<int> &S, int &hint_index) {
     int n = S.size();
     int j = sqrt(n);
     hint_index = get_hint_index(u, S);
+
+    double p = rand() % 100000;
+    p /= 100000;
+    if (p > Prob) printf("Failure!\n");
 
     return extract_query_by_hint(u, S, hint_index);
 //    return ret;
