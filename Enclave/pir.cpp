@@ -289,14 +289,14 @@ void ecall_pir_with_net(void) {
         // printf("K = [%d]: %f ms\n", k,delta/NUM_TRAIL);
         // printf("K = [%d] response time: %f ms\n\n", k,response/NUM_TRAIL);
     }
-    sort(times.begin(), times.end());
+//    sort(times.begin(), times.end());
     double total_time = 0;
     for (auto t : times) {
         printf("%f\n", t);
 	total_time += t;
     }
     total_time /= times.size();
-    printf("avg response time is: %f ms\n", total_time);
+ //   printf("avg response time is: %f ms\n", total_time);
     
 
     sgx_ecc256_close_context(ecc_handle);
