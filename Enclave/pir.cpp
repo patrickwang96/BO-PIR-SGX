@@ -278,14 +278,20 @@ void ecall_pir_with_net(void) {
             response = getTimeDelta(s3, ns3, s4, ns4);
             times[t] = response;
         }    
-        ocall_get_time(&s2, &ns2);
-        double delta = getTimeDelta(s1, ns1, s2, ns2);
-        printf("K = [%d]: %f ms\n", k,delta/NUM_TRAIL);
-        printf("K = [%d] response time: %f ms\n\n", k,response/NUM_TRAIL);
+        // ocall_get_time(&s2, &ns2);
+        // double delta = getTimeDelta(s1, ns1, s2, ns2);
+        // printf("K = [%d]: %f ms\n", k,delta/NUM_TRAIL);
+        // printf("K = [%d] response time: %f ms\n\n", k,response/NUM_TRAIL);
     }
+    sort(times.begin(), times.end());
+    double total_time = 0;
     for (auto t : times) {
         printf("%f\n", t);
+	total_time += t;
     }
+    total_time /= times.size();
+    printf("avg response time is: %f ms\n", total_time);
+    
 
     sgx_ecc256_close_context(ecc_handle);
 
