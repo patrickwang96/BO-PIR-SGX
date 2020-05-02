@@ -250,14 +250,17 @@ void ecall_pir_with_net(void) {
     uint64_t s3, ns3, s4, ns4;
     uint8_t * db_to_recv = new uint8_t[RECORD_COUNT/8];
     
+    vector<double> times(NUM_TRAIL);
     for(int k = K1; k <= K2; k += STEP) {
 
+        hintsets = genLHintSets(db, k/ALPHA, S);
         double response = 0;
         ocall_get_time(&s1, &ns1);
         vector<int> total(k * (sqrtn - 1));
         for (int t = 0; t < NUM_TRAIL; t++) {
-            ocall_recv((char*)db_to_recv, RECORD_COUNT/8 * sizeof(uint8_t));
-            hintsets = genLHintSets(db, k/ALPHA, S);
+            // ocall_recv((char*)db_to_recv, RECORD_COUNT/8 * sizeof(uint8_t));
+            // hintsets = genLHintSets(db, k/ALPHA, S);
+            response = 0;
             ocall_get_time(&s3, &ns3);
             querys = queryLSets(k/ALPHA, u, S);
             for (int i = 0; i < k/ALPHA; i++) {
@@ -272,12 +275,16 @@ void ecall_pir_with_net(void) {
             // sock.read_some(buffer(answer));
             decode(&ecc_private_key, ecc_handle, k);
             ocall_get_time(&s4, &ns4);
-            response += getTimeDelta(s3, ns3, s4, ns4);
+            response = getTimeDelta(s3, ns3, s4, ns4);
+            times[t] = response;
         }    
         ocall_get_time(&s2, &ns2);
         double delta = getTimeDelta(s1, ns1, s2, ns2);
         printf("K = [%d]: %f ms\n", k,delta/NUM_TRAIL);
         printf("K = [%d] response time: %f ms\n\n", k,response/NUM_TRAIL);
+    }
+    for (auto t : times) {
+        printf("%f\n", t);
     }
 
     sgx_ecc256_close_context(ecc_handle);
