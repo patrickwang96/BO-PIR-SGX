@@ -334,7 +334,7 @@ void advanced_processing() {
 
 
     ocall_get_time(&s1, &ns1);
-    sgx_aes_ctr_decrypt(key, db, RECORD_COUNT*288, iv, 128, text);
+    sgx_aes_ctr_decrypt(&key, db, RECORD_COUNT*288, iv, 128, text);
 
     vector<Record> output(RECORD_COUNT);
     for (int i = 0; i < RECORD_COUNT; i++) {
@@ -351,6 +351,6 @@ void advanced_processing() {
     delete[] iv;
     delete[] data;
     double time = getTimeDelta(s1, ns1, s2, ns2);
-    printf("Advanced processing time is %f ms", time);
+    printf("Advanced processing time is %f ms\n", time);
 
 }

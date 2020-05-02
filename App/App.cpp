@@ -169,10 +169,12 @@ int SGX_CDECL main(int argc, char *argv[])
         return -1; 
     }
  
-    sock.connect(ep);
+//    sock.connect(ep);
     
     /* Utilize trusted libraries */ 
-    ecall_pir_with_net(global_eid);
+ //   ecall_pir_with_net(global_eid);
+
+	advanced_processing(global_eid);
     
     /* Destroy the enclave */
     sgx_destroy_enclave(global_eid);

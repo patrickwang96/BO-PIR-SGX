@@ -15,6 +15,7 @@ enclave {
     trusted {
         public void ecall_pir();
         public void ecall_pir_with_net();
+		public void advanced_processing();
     };
 
     /* 
